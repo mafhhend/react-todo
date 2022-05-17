@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-base{
+    @apply p-4 rounded;
+}
+.btn-dark{
+    @apply bg-gray-900 text-white;
+}
+
+.btn-dark{
+    @apply bg-gray-900 text-white;
+}
+
+
+.btn-danger{
+    @apply bg-red-200 text-red-600;
+}
