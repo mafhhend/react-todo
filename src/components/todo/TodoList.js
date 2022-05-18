@@ -1,6 +1,7 @@
 import { Fragment, useContext } from "react"
 import TodoItem from "./TodoItem"
 import TodoContext from "./../../store/TodoContext"
+
 const TodoList = () => {
     const { todos } = useContext(TodoContext)
     return <Fragment>
