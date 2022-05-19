@@ -3,10 +3,11 @@ import TodoItem from "./TodoItem"
 import TodoContext from "./../../store/TodoContext"
 
 const TodoList = () => {
-    const { todos } = useContext(TodoContext)
+    const { stateTodos } = useContext(TodoContext)
+    
     return <Fragment>
         <ul className="p-4">
-            {todos.map(todo => <TodoItem key={todo.id} todo={todo} />)}
+            {stateTodos.map(todo => <TodoItem key={todo.id} todo={todo} />)}
         </ul>
     </Fragment>
 }

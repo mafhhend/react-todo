@@ -1,49 +1,71 @@
 import { addTodo as RequestAddTodo, getTodos as RequestGetTodos, deleteTodo as RequestDeleteTodo, updateTodo as RequestUpdateTodo } from "./../lib/api"
-const { createContext, useState } = require("react");
+import ACTIONS from "./Actions";
 
-//1
+const { createContext, useState, useReducer, useEffect } = require("react");
+
+const TodoReducer = (state, action) => {
+    switch (action.type) {
+        case ACTIONS.TodoAdd: {
+            return [...state, {
+                id: new Date().getTime(),
+                title: action.payload.todoInput
+            }]
+        }
+        case ACTIONS.TodoGet: {
+            return action.payload.data
+        }
+
+        case ACTIONS.TodoDelete: {
+            const filteredTodos = state.filter(todo => {
+                if (todo.id !== action.payload.id) return true;
+            })
+
+            return filteredTodos;
+        }
+        case ACTIONS.TodoUpdate: {
+            const index = state.findIndex(todo => todo.id === action.payload.id)
+            state[index].title = action.payload.todoText
+            return state;
+
+        }
+        default: { }
+    }
+}
+
 const TodoContext = createContext()
 
-//3 we will add data here
 export function TodoProvider({ children }) {
-    // MUST define your state here in Provider:
 
-    const [todos, setTodos] = useState([]);
-    RequestGetTodos().then(data => {
-        setTodos(data)
-    })
+    const [stateTodos, dispatchTodo] = useReducer(TodoReducer, []);
 
+    useEffect(() => {
+        RequestGetTodos().then(data => {
+            dispatchTodo({ type: ACTIONS.TodoGet, payload: { data } })
+        })
+
+    }, [])
     const addTodo = todoInput => {
         RequestAddTodo(todoInput).then(data => {
-            setTodos(currentState => [...currentState, {
-                id: new Date().getTime(),
-                title: todoInput
-            }])
+            dispatchTodo({ type: ACTIONS.TodoAdd, payload: { data, todoInput } })
         })
     }
 
     const deleteTodo = id => {
         RequestDeleteTodo(id).then(data => {
-            const filteredTodos = todos.filter(todo => {
-                if (todo.id !== id) return true;
-            })
-            setTodos(filteredTodos)
+            dispatchTodo({ type: ACTIONS.TodoDelete, payload: { data, id } })
         })
     }
     const updateTodo = (id, todoText) => {
         RequestUpdateTodo(id, todoText).then(data => {
-            const index = todos.findIndex(todo => todo.id === id)
-            todos[index].title = todoText
-            setTodos([...todos])
+            dispatchTodo({ type: ACTIONS.TodoUpdate, payload: { todoText, id } })
         })
     }
     return (
         //the value will share every where, {{}} is required
-        <TodoContext.Provider value={{ todos, addTodo, deleteTodo, updateTodo }}>
+        <TodoContext.Provider value={{ stateTodos, addTodo, deleteTodo, updateTodo }}>
             {children}
         </TodoContext.Provider>
     )
 }
 
-//2
 export default TodoContext
