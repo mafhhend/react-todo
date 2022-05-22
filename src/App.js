@@ -1,10 +1,13 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import TodoList from "./components/todo/TodoList";
 import TodoForm from "./components/todo/TodoForm";
-export default () => {
+const App = () => {
 
   return <Fragment>
-    <TodoForm/>
-    <TodoList/>
+    <TodoForm />
+    <TodoList />
   </Fragment>
 };
+
+
+export default App;
